@@ -23,15 +23,8 @@ const intro = magpieViews.view_generator("intro", {
   trials: 1,
   name: 'intro',
   // If you use JavaScripts Template String `I am a Template String`, you can use HTML <></> and javascript ${} inside
-  text: `This is a sample introduction view.
-            <br />
-            <br />
-            The introduction view welcomes the participant and gives general information
-            about the experiment. You are in the <strong>${coin}</strong> group.
-            <br />
-            <br />
-            This is a minimal experiment with one forced choice view. It can serve as a starting point for programming your own experiment.`,
-  buttonText: 'begin the experiment'
+  text: `Thank you very much for participating! Click to start the experiment.`,
+  buttonText: 'start the experiment'
 });
 
 // For most tasks, you need instructions views
@@ -39,11 +32,17 @@ const instructions = magpieViews.view_generator("instructions", {
   trials: 1,
   name: 'instructions',
   title: 'General Instructions',
-  text: `This is a sample instructions view.
-            <br />
-            <br />
-            Tell your participants what they are to do here.`,
-  buttonText: 'go to trials'
+  text: `This experiment is divided into a practice run and into a main testing run. You are going to see two differently rotated objects. Your task is now to recognize if they are the same object. To do this, if they are the same, press "f" and if they are different, press "j". Try to be as fast and acurate as possible! Click to start the practice trials!`,
+  buttonText: 'start with trials'
+});
+
+
+const pre_main_instruction = magpieViews.view_generator("instructions", {
+  trials: 1,
+  name: 'instructions_main',
+  title: 'Start of the main trial',
+  text: `Congrats, you completed the practice trials. Take a deep breath and click to start with the main session.`,
+  buttonText: 'start with trials'
 });
 
 
@@ -102,17 +101,32 @@ const thanks = magpieViews.view_generator("thanks", {
 */
 
 
-// Here, we initialize a normal forced_choice view
-const forced_choice_2A = magpieViews.view_generator("forced_choice", {
+
+const key_press_practice = magpieViews.view_generator("key_press", {
   // This will use all trials specified in `data`, you can user a smaller value (for testing), but not a larger value
-  trials: trial_info.forced_choice.length,
+  trials: 12,
   // name should be identical to the variable name
-  name: 'forced_choice_2A',
-  data: trial_info.forced_choice,
+  name: 'key_press_practice',
+  data: _.shuffle(practice_info.key_press),
   // you can add custom functions at different stages through a view's life cycle
-  // hook: {
-  //     after_response_enabled: check_response
-  // }
+  hook: {
+       after_response_enabled: check_response,
+	   after_stim_shown: time_limit,
+   }
+});
+
+
+const key_press_main = magpieViews.view_generator("key_press", {
+  // This will use all trials specified in `data`, you can user a smaller value (for testing), but not a larger value
+  trials: 48,
+  // name should be identical to the variable name
+  name: 'key_press_main',
+  data: _.shuffle(main_info.key_press),
+  // you can add custom functions at different stages through a view's life cycle
+
+  hook: {
+	   after_stim_shown: time_limit,
+   }
 });
 
 // There are many more templates available:
